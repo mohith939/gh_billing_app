@@ -6,7 +6,7 @@ class PrimaryButton extends StatelessWidget {
   final IconData? icon;
   final double elevation;
   final double borderRadius;
-  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry? padding;
   final bool isFullWidth;
   final TextStyle? textStyle;
   final bool isLoading;
@@ -16,9 +16,9 @@ class PrimaryButton extends StatelessWidget {
     required this.onPressed,
     required this.label,
     this.icon,
-    this.elevation = 8.0,
-    this.borderRadius = 16.0,
-    this.padding = const EdgeInsets.symmetric(vertical: 16),
+    this.elevation = 2.0,
+    this.borderRadius = 12.0,
+    this.padding,
     this.isFullWidth = true,
     this.textStyle,
     this.isLoading = false,
@@ -26,59 +26,39 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = ElevatedButton.styleFrom(
-      backgroundColor: Theme.of(context).primaryColor,
-      foregroundColor: Colors.white,
-      padding: padding,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(borderRadius),
-      ),
-      elevation: elevation,
-      shadowColor: Theme.of(context).primaryColor.withValues(alpha: 0.4),
-      minimumSize: isFullWidth ? const Size.fromHeight(50) : null,
-    );
-
-    if (icon != null) {
-      return Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: ElevatedButton.icon(
-          onPressed: isLoading ? null : onPressed,
-          icon: isLoading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2,
-                  ),
-                )
-              : Icon(icon),
-          label: Text(
-            label,
-            style: textStyle,
-          ),
-          style: style,
-        ),
-      );
-    }
-
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
-        style: style,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).primaryColor,
+          foregroundColor: Colors.white,
+          padding: padding ?? const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          elevation: elevation,
+          minimumSize: isFullWidth ? const Size.fromHeight(56) : null,
+        ),
         child: isLoading
             ? const SizedBox(
-                width: 20,
-                height: 20,
+                width: 24,
+                height: 24,
                 child: CircularProgressIndicator(
                   color: Colors.white,
                   strokeWidth: 2,
                 ),
               )
-            : Text(
-                label,
-                style: textStyle,
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: isFullWidth ? MainAxisSize.max : MainAxisSize.min,
+                children: [
+                  if (icon != null) ...[
+                    Icon(icon, size: 20),
+                    const SizedBox(width: 10),
+                  ],
+                  Text(label, style: textStyle),
+                ],
               ),
       ),
     );

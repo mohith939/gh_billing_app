@@ -1,5 +1,3 @@
-import 'package:billing_app/core/widgets/input_label.dart';
-import 'package:billing_app/core/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +7,9 @@ import '../bloc/product_bloc.dart';
 import '../../domain/entities/product.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/app_validators.dart';
+import '../../../../core/widgets/input_label.dart';
+import '../../../../core/widgets/primary_button.dart';
+import '../../../../core/widgets/common_footer.dart';
 
 class AddProductPage extends StatefulWidget {
   const AddProductPage({super.key});
@@ -149,10 +150,16 @@ class _AddProductPageState extends State<AddProductPage> {
             ),
           ),
         ),
-        bottomNavigationBar: PrimaryButton(
-          onPressed: _submit,
-          icon: Icons.add_circle,
-          label: 'Add Product',
+        bottomNavigationBar: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            PrimaryButton(
+              onPressed: _submit,
+              icon: Icons.add_circle,
+              label: 'Add Product',
+            ),
+            const CommonFooter(),
+          ],
         ));
   }
 }

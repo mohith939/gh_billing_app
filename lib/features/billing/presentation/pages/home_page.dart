@@ -7,6 +7,9 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../billing/presentation/bloc/billing_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/primary_button.dart';
+import '../../../../core/widgets/common_footer.dart';
+import '../../../../core/data/hive_database.dart';
+import '../../../../core/utils/update_service.dart';
 import '../../domain/entities/cart_item.dart';
 
 class HomePage extends StatefulWidget {
@@ -27,6 +30,44 @@ class _HomePageState extends State<HomePage> {
 
   // Cooldown mapping to prevent rapid firing of the same barcode
   final Map<String, DateTime> _lastScanTimes = {};
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkSubscription();
+      _checkForUpdates();
+    });
+  }
+
+  void _checkForUpdates() {
+    UpdateService.checkForUpdates(context);
+  }
+
+  void _checkSubscription() {
+    final email = HiveDatabase.settingsBox.get('logged_in_user');
+    if (email != null) {
+      final user = HiveDatabase.userBox.get(email);
+      if (user != null && user.needsRenewalPrompt) {
+        final daysLeft = user.expiryDate!.difference(DateTime.now()).inDays;
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Subscription Renewal'),
+            content: Text(
+              'Your subscription expires in $daysLeft days. Please pay ₹2500 via Google Pay to 9392633211 to avoid service interruption.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Remind me later'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -105,20 +146,27 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      bottomSheet:
-          BlocBuilder<BillingBloc, BillingState>(builder: (context, state) {
-        return PrimaryButton(
-          onPressed: state.cartItems.isEmpty
-              ? null
-              : () async {
-                  _scannerController.stop();
-                  await context.push('/checkout');
-                  if (_isCameraOn && mounted) _scannerController.start();
-                },
-          icon: Icons.payment,
-          label: 'Review Order',
-        );
-      }),
+      bottomSheet: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            BlocBuilder<BillingBloc, BillingState>(builder: (context, state) {
+              return PrimaryButton(
+                onPressed: state.cartItems.isEmpty
+                    ? null
+                    : () async {
+                        _scannerController.stop();
+                        await context.push('/checkout');
+                        if (_isCameraOn && mounted) _scannerController.start();
+                      },
+                icon: Icons.payment,
+                label: 'Review Order',
+              );
+            }),
+            const CommonFooter(),
+          ],
+        ),
+      ),
     );
   }
 
@@ -386,7 +434,7 @@ class _HomePageState extends State<HomePage> {
 
                   return ListView.separated(
                     padding: const EdgeInsets.only(
-                        left: 15, right: 15, top: 16, bottom: 100),
+                        left: 15, right: 15, top: 16, bottom: 150),
                     itemCount: state.cartItems.length,
                     separatorBuilder: (context, index) =>
                         const SizedBox(height: 12),
@@ -531,7 +579,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-  // A floating Details/Checkout Button at the very bottom
-  // Added a Stack wrapper below to overlay this button
 }

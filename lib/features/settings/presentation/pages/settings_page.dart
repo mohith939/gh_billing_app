@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:app_settings/app_settings.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/update_service.dart';
 import '../../../shop/presentation/bloc/shop_bloc.dart';
 import '../bloc/printer_bloc.dart';
 import '../bloc/printer_event.dart';
 import '../bloc/printer_state.dart';
+import '../../../../core/widgets/common_footer.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -17,11 +20,29 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  String _version = '1.0.0';
+  bool _isCheckingUpdate = false;
+
   @override
   void initState() {
     super.initState();
-    // Re-initialize printer state whenever settings page opens
+    _initPackageInfo();
     context.read<PrinterBloc>().add(InitPrinterEvent());
+  }
+
+  Future<void> _initPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _version = info.version;
+    });
+  }
+
+  Future<void> _handleUpdateCheck() async {
+    setState(() => _isCheckingUpdate = true);
+    await UpdateService.checkForUpdates(context, showNoUpdateSnackBar: true);
+    if (mounted) {
+      setState(() => _isCheckingUpdate = false);
+    }
   }
 
   @override
@@ -101,6 +122,13 @@ class _SettingsPageState extends State<SettingsPage> {
             _buildSectionHeader('Management'),
             _buildListGroup(
               children: [
+                _buildListItem(
+                  icon: Icons.analytics_outlined,
+                  title: 'Sales Analytics',
+                  subtitle: 'Monthly revenue and product sales',
+                  onTap: () => context.push('/analytics'),
+                ),
+                _buildDivider(),
                 _buildListItem(
                   icon: Icons.qr_code_scanner,
                   title: 'Products',
@@ -202,6 +230,52 @@ class _SettingsPageState extends State<SettingsPage> {
               },
             ),
 
+            const SizedBox(height: 24),
+
+            // App Section
+            _buildSectionHeader('App'),
+            _buildListGroup(
+              children: [
+                _buildListItem(
+                  icon: Icons.system_update_rounded,
+                  title: 'Check for Updates',
+                  subtitle: 'Current Version: $_version',
+                  trailingWidget: _isCheckingUpdate 
+                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                    : null,
+                  onTap: _isCheckingUpdate ? null : _handleUpdateCheck,
+                ),
+                _buildDivider(),
+                _buildListItem(
+                  icon: Icons.logout,
+                  title: 'Logout',
+                  subtitle: 'Sign out of your account',
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Logout'),
+                        content: const Text('Are you sure you want to logout?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              context.go('/login');
+                            },
+                            child: const Text('Logout', style: TextStyle(color: Colors.red)),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               child: Text(
@@ -217,6 +291,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ],
         ),
       ),
+      bottomNavigationBar: const CommonFooter(),
     );
   }
 

@@ -5,6 +5,7 @@ import '../bloc/product_bloc.dart';
 import '../../domain/entities/product.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/app_validators.dart';
+import '../../../../core/widgets/common_footer.dart';
 
 class ProductListPage extends StatefulWidget {
   const ProductListPage({super.key});
@@ -256,6 +257,7 @@ class _ProductListPageState extends State<ProductListPage> {
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: 32),
       ),
+      bottomNavigationBar: const CommonFooter(),
     );
   }
 
