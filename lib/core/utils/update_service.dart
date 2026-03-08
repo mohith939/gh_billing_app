@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class UpdateService {
   // Updated URL to point to your GitHub repository
-  static const String _updateUrl = 'https://raw.githubusercontent.com/mohith939/gh_billing_app/main/version.json';
+  static const String _updateUrl = 'https://raw.githubusercontent.com/mohith939/gh_billing_app/refs/heads/main/version.json';
 
   static Future<void> checkForUpdates(BuildContext context, {bool showNoUpdateSnackBar = false}) async {
     try {
