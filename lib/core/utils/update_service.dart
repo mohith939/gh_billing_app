@@ -5,8 +5,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UpdateService {
-  // Replace this with your actual update JSON URL
-  static const String _updateUrl = 'https://raw.githubusercontent.com/finstics/updates/main/version.json';
+  // Updated URL to point to your GitHub repository
+  static const String _updateUrl = 'https://raw.githubusercontent.com/mohith939/gh_billing_app/main/version.json';
 
   static Future<void> checkForUpdates(BuildContext context, {bool showNoUpdateSnackBar = false}) async {
     try {
