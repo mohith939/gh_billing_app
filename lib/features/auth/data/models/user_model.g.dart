@@ -20,19 +20,21 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
       email: fields[0] as String,
       password: fields[1] as String,
       shopName: fields[2] as String,
-      phoneNumber: fields[5] as String? ?? '',
-      upiId: fields[6] as String? ?? '',
-      addressLine1: fields[7] as String? ?? '',
-      addressLine2: fields[8] as String? ?? '',
       expiryDate: fields[3] as DateTime?,
       isSuperAdmin: fields[4] as bool,
+      phoneNumber: fields[5] as String,
+      upiId: fields[6] as String,
+      addressLine1: fields[7] as String,
+      addressLine2: fields[8] as String,
+      footerText: fields[9] as String,
+      qrCodePath: fields[10] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, UserModel obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.email)
       ..writeByte(1)
@@ -50,7 +52,11 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
       ..writeByte(7)
       ..write(obj.addressLine1)
       ..writeByte(8)
-      ..write(obj.addressLine2);
+      ..write(obj.addressLine2)
+      ..writeByte(9)
+      ..write(obj.footerText)
+      ..writeByte(10)
+      ..write(obj.qrCodePath);
   }
 
   @override

@@ -8,6 +8,8 @@ class AppUser extends Equatable {
   final String upiId;
   final String addressLine1;
   final String addressLine2;
+  final String footerText;
+  final String? qrCodePath;
   final DateTime? expiryDate;
   final bool isSuperAdmin;
 
@@ -19,6 +21,8 @@ class AppUser extends Equatable {
     this.upiId = '',
     this.addressLine1 = '',
     this.addressLine2 = '',
+    this.footerText = 'Thank you, Visit again!!!',
+    this.qrCodePath,
     this.expiryDate,
     this.isSuperAdmin = false,
   });
@@ -45,6 +49,8 @@ class AppUser extends Equatable {
         upiId,
         addressLine1,
         addressLine2,
+        footerText,
+        qrCodePath,
         expiryDate,
         isSuperAdmin
       ];

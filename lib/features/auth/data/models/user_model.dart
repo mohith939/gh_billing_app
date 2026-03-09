@@ -32,6 +32,12 @@ class UserModel extends AppUser {
   @override
   @HiveField(8)
   final String addressLine2;
+  @override
+  @HiveField(9)
+  final String footerText;
+  @override
+  @HiveField(10)
+  final String? qrCodePath;
 
   const UserModel({
     required this.email,
@@ -41,6 +47,8 @@ class UserModel extends AppUser {
     this.upiId = '',
     this.addressLine1 = '',
     this.addressLine2 = '',
+    this.footerText = 'Thank you, Visit again!!!',
+    this.qrCodePath,
     this.expiryDate,
     this.isSuperAdmin = false,
   }) : super(
@@ -51,6 +59,8 @@ class UserModel extends AppUser {
           upiId: upiId,
           addressLine1: addressLine1,
           addressLine2: addressLine2,
+          footerText: footerText,
+          qrCodePath: qrCodePath,
           expiryDate: expiryDate,
           isSuperAdmin: isSuperAdmin,
         );
@@ -64,6 +74,8 @@ class UserModel extends AppUser {
       upiId: user.upiId,
       addressLine1: user.addressLine1,
       addressLine2: user.addressLine2,
+      footerText: user.footerText,
+      qrCodePath: user.qrCodePath,
       expiryDate: user.expiryDate,
       isSuperAdmin: user.isSuperAdmin,
     );
@@ -79,6 +91,8 @@ class UserModel extends AppUser {
     String? upiId,
     String? addressLine1,
     String? addressLine2,
+    String? footerText,
+    String? qrCodePath,
     DateTime? expiryDate,
     bool? isSuperAdmin,
   }) {
@@ -90,6 +104,8 @@ class UserModel extends AppUser {
       upiId: upiId ?? this.upiId,
       addressLine1: addressLine1 ?? this.addressLine1,
       addressLine2: addressLine2 ?? this.addressLine2,
+      footerText: footerText ?? this.footerText,
+      qrCodePath: qrCodePath ?? this.qrCodePath,
       expiryDate: expiryDate ?? this.expiryDate,
       isSuperAdmin: isSuperAdmin ?? this.isSuperAdmin,
     );
